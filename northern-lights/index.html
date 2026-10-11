@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Northern Lights</title>
+    <style>
+      html, body { margin: 0; height: 100%; background: #050a23; overflow: hidden; }
+      #loading {
+        position: fixed; inset: 0; display: grid; place-items: center;
+        color: #bfd9ff; font: 16px/1.4 system-ui, sans-serif; text-align: center;
+      }
+      canvas { display: block; outline: none; }
+    </style>
+  </head>
+  <body>
+    <div id="loading">Loading the northern sky…<br /><small>WASD to fly, hold right mouse button to look</small></div>
+    <script type="module">
+      import init from "./northern_lights.js";
+      // The first frame means the game is up: drop the loading text.
+      new MutationObserver((_, observer) => {
+        if (document.querySelector("canvas")) {
+          document.getElementById("loading")?.remove();
+          observer.disconnect();
+        }
+      }).observe(document.body, { childList: true });
+      init().catch((e) => {
+        // winit leaves the Rust event loop by throwing this on purpose; it's not a failure.
+        if (!String(e).includes("Using exceptions for control flow")) throw e;
+      });
+    </script>
+  </body>
+</html>
